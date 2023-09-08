@@ -190,7 +190,7 @@ pub struct Device {
 }
 
 /// Type of GPS fix.
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub enum Mode {
     /// No fix at all.
     NoFix,
