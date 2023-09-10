@@ -237,7 +237,7 @@ pub struct Tpv {
     /// GPS fix status.
     pub status: Option<i32>,
     /// NMEA mode, see `Mode` enum.
-    #[serde(deserialize_with = "mode_from_str")]
+    // #[serde(deserialize_with = "mode_from_str")]
     pub mode: Mode,
     /// Time/date stamp in ISO8601 format, UTC. May have a
     /// fractional part of up to .001sec precision. May be absent
