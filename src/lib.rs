@@ -53,6 +53,7 @@ extern crate serde_derive;
 
 use serde::de::*;
 use serde::Deserializer;
+use serde::Serializer;
 use std::fmt;
 use std::io;
 
@@ -210,7 +211,7 @@ impl fmt::Display for Mode {
     }
 }
 
-fn mode_from_str<'de, D>(deserializer: D) -> Result<Mode, D::Error>
+fn mode_from<'de, D>(deserializer: D) -> Result<Mode, D::Error>
 where
     D: Deserializer<'de>,
 {
@@ -220,6 +221,17 @@ where
         3 => Ok(Mode::Fix3d),
         _ => Ok(Mode::NoFix),
     }
+}
+
+fn mode_to<S>(mode: &Mode, serializer: S) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    serializer.serialize_u8(match mode {
+        Mode::NoFix => 1,
+        Mode::Fix2d => 2,
+        Mode::Fix3d => 3,
+    })
 }
 
 /// GPS position.
@@ -237,7 +249,8 @@ pub struct Tpv {
     /// GPS fix status.
     pub status: Option<i32>,
     /// NMEA mode, see `Mode` enum.
-    #[serde(deserialize_with = "mode_from_str")]
+    #[serde(deserialize_with = "mode_from")]
+    #[serde(serialize_with = "mode_to")]
     pub mode: Mode,
     /// Time/date stamp in ISO8601 format, UTC. May have a
     /// fractional part of up to .001sec precision. May be absent
